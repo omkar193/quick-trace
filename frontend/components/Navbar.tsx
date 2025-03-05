@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaSignInAlt, FaUserPlus, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaShippingFast } from "react-icons/fa";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,8 +41,9 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
       <div className="container">
-        <Link className="navbar-brand" href="/">
-          Quick-Trace
+        <Link className="navbar-brand d-flex align-items-center" href="/">
+          <FaShippingFast className="me-2" size={24} /> {/* Icon before text */}
+          <b>QuickTrace</b>
         </Link>
 
         <button

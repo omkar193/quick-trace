@@ -1,26 +1,22 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaBoxOpen, FaTruck, FaClock } from "react-icons/fa";
 
-// ✅ Only import if used
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-import deliveryAnimation from "@/public/delivery-animation.json"; // ✅ Ensure this is used
-
 export default function Home() {
   return (
-    <div className="container vh-100 d-flex flex-column justify-content-center align-items-center">
-      {/* Hero Section */}
-      <div className="row justify-content-center align-items-center">
-        <div className="col-md-6 d-flex flex-column justify-content-center align-items-center text-center">
+    <div className="container-fluid d-flex flex-column min-vh-100 overflow-auto">
+      {/* ✅ Hero Section */}
+      <div className="row flex-grow-1 align-items-center justify-content-center">
+        {/* Left Section (9 parts on large screens, full width on small screens) */}
+        <div className="col-lg-9 col-md-8 col-sm-12 d-flex flex-column align-items-center text-center">
           <h1 className="fw-bold text-primary">
             Quick-Trace: Fast & Reliable Order Tracking 🚀
           </h1>
           <p className="text-muted">
             Seamless order placement and real-time delivery tracking.
           </p>
-          <div className="mt-3">
-            <Link href="/auth/register" className="btn btn-success me-2">
+          <div className="d-flex justify-content-center gap-3 mt-3">
+            <Link href="/auth/register" className="btn btn-success">
               Get Started
             </Link>
             <Link
@@ -32,29 +28,30 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ✅ Fixed: Lottie Animation is now included */}
-        <div className="col-md-6 d-flex justify-content-center">
+        {/* Right Section (Animation: 3 parts on large screens, full width on small screens) */}
+        {/* <div className="col-lg-3 col-md-4 col-sm-12 d-flex justify-content-center mt-3 mt-md-0">
           <Lottie
             animationData={deliveryAnimation}
-            loop={true}
-            style={{ height: 300 }}
+            loop
+            className="img-fluid"
+            style={{ maxWidth: "100%", height: "auto", maxHeight: "300px" }}
           />
-        </div>
+        </div> */}
       </div>
 
-      {/* Features Section */}
-      <div className="row mt-5 text-center">
-        <div className="col-md-4">
+      {/* ✅ Features Section */}
+      <div className="row text-center w-100 mt-4 pb-3">
+        <div className="col-md-4 col-sm-12 mb-3">
           <FaBoxOpen className="text-primary" size={50} />
           <h4>Easy Order Placement</h4>
           <p>Customers can place orders seamlessly with just a few clicks.</p>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-4 col-sm-12 mb-3">
           <FaTruck className="text-success" size={50} />
           <h4>Live Delivery Tracking</h4>
           <p>Stay updated with real-time order statuses.</p>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-4 col-sm-12 mb-3">
           <FaClock className="text-warning" size={50} />
           <h4>Fast & Secure</h4>
           <p>Secure transactions and efficient delivery system.</p>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import { getAuthHeaders, getUser } from "@/utils/auth";
 import OrderForm from "@/components/OrderForm";
@@ -16,7 +16,8 @@ interface Order {
 export default function CustomerDashboard() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [user, setUser] = useState(getUser()); // ✅ Maintain user in state
+  const [user] = useState(getUser()); // ✅ Set user once at the start
+  const hasFetched = useRef(false); // ✅ Prevent multiple API calls
 
   // ✅ Fetch customer orders
   const fetchOrders = useCallback(async () => {
@@ -38,7 +39,7 @@ export default function CustomerDashboard() {
     } catch (error) {
       console.error("Fetch Error:", error);
     }
-  }, [user]); // ✅ `user` added as dependency
+  }, [user?.id]); // ✅ `user.id` is stable and doesn't change
 
   // ✅ Handle new order placement
   const handlePlaceOrder = async (
@@ -67,8 +68,6 @@ export default function CustomerDashboard() {
   };
 
   useEffect(() => {
-    setUser(getUser()); // ✅ Ensure user is always up-to-date
-
     if (!user) {
       router.push("/auth/login");
       return;
@@ -79,8 +78,11 @@ export default function CustomerDashboard() {
       return;
     }
 
-    fetchOrders();
-  }, [router, user, fetchOrders]); // ✅ `user` is now properly included
+    if (!hasFetched.current) {
+      fetchOrders();
+      hasFetched.current = true; // ✅ Ensure it runs only once
+    }
+  }, [router, user, fetchOrders]); // ✅ Depend only on `router` and `fetchOrders`
 
   return (
     <div className="container mt-5">
