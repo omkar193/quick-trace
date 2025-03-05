@@ -16,11 +16,11 @@ interface Order {
 export default function CustomerDashboard() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
-  const user = getUser(); // ✅ Get logged-in user
+  const [user, setUser] = useState(getUser()); // ✅ Maintain user in state
 
   // ✅ Fetch customer orders
   const fetchOrders = useCallback(async () => {
-    if (!user) return;
+    if (!user?.id) return;
 
     const headers = getAuthHeaders();
     try {
@@ -38,7 +38,7 @@ export default function CustomerDashboard() {
     } catch (error) {
       console.error("Fetch Error:", error);
     }
-  }, [user?.id]);
+  }, [user]); // ✅ `user` added as dependency
 
   // ✅ Handle new order placement
   const handlePlaceOrder = async (
@@ -46,8 +46,6 @@ export default function CustomerDashboard() {
     quantity: number,
     location: string
   ) => {
-    const orderData = { product, quantity, location };
-
     try {
       const res = await fetch("http://localhost:3000/api/orders", {
         method: "POST",
@@ -55,7 +53,7 @@ export default function CustomerDashboard() {
           "Content-Type": "application/json",
           ...getAuthHeaders(),
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({ product, quantity, location }),
       });
 
       if (!res.ok) {
@@ -69,6 +67,8 @@ export default function CustomerDashboard() {
   };
 
   useEffect(() => {
+    setUser(getUser()); // ✅ Ensure user is always up-to-date
+
     if (!user) {
       router.push("/auth/login");
       return;
@@ -80,7 +80,7 @@ export default function CustomerDashboard() {
     }
 
     fetchOrders();
-  }, [router, fetchOrders]);
+  }, [router, user, fetchOrders]); // ✅ `user` is now properly included
 
   return (
     <div className="container mt-5">
