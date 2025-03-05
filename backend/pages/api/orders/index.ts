@@ -13,6 +13,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // ✅ Fix CORS Policy
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001"); // Allow frontend
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Handle CORS preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   await connectDB();
 
   if (req.method !== "POST") {
@@ -29,6 +39,7 @@ export default async function handler(
       token,
       process.env.JWT_SECRET!
     ) as CustomJwtPayload;
+
     if (decoded.role !== "customer") {
       return res
         .status(403)
@@ -36,7 +47,6 @@ export default async function handler(
     }
 
     const { product, quantity, location } = req.body;
-
     if (!product || !quantity || !location) {
       return res.status(400).json({ error: "All fields are required" });
     }

@@ -10,8 +10,34 @@ export default function Register() {
   const [password, setPassword] = useState("");
 
   const handleRegister = async () => {
-    console.log("Registering:", name, email, password);
-    router.push("/auth/login"); // Redirect to login after registration
+    const userData = {
+      name,
+      email,
+      password,
+      role: "customer", // Setting the role as "customer" by default
+    };
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Registration successful:", data);
+        router.push("/auth/login"); // Redirect to login page
+      } else {
+        console.error("Registration failed:", data.message);
+        alert(data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -20,7 +46,7 @@ export default function Register() {
         className="card p-4 shadow-lg"
         style={{ maxWidth: "400px", width: "100%" }}
       >
-        <h2 className="text-center text-success mb-4">Register</h2>
+        <h2 className="text-center text-success mb-4">Welcome! Register</h2>
 
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -28,6 +54,7 @@ export default function Register() {
             type="text"
             className="form-control"
             placeholder="Enter your name"
+            value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
@@ -38,6 +65,7 @@ export default function Register() {
             type="email"
             className="form-control"
             placeholder="Enter your email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -48,6 +76,7 @@ export default function Register() {
             type="password"
             className="form-control"
             placeholder="Enter your password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>

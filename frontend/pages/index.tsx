@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <div className="container vh-100 d-flex flex-column justify-content-center align-items-center">
       {/* Hero Section */}
-      <div className="row align-items-center text-center">
-        <div className="col-md-6 d-flex flex-column justify-content-center">
+      <div className="row justify-content-center">
+        <div className="col-md-6 d-flex flex-column justify-content-center align-items-center text-center">
           <h1 className="fw-bold text-primary">
             Quick-Trace: Fast & Reliable Order Tracking 🚀
           </h1>
@@ -29,15 +29,6 @@ export default function Home() {
               Track Orders
             </Link>
           </div>
-        </div>
-
-        {/* Lottie Animation */}
-        <div className="col-md-6 d-flex justify-content-center">
-          <Lottie
-            animationData={deliveryAnimation}
-            loop={true}
-            style={{ height: 300 }}
-          />
         </div>
       </div>
 

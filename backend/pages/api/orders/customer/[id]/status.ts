@@ -4,6 +4,7 @@ import Order from "@/models/Order";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Server } from "socket.io";
 
+// Define JWT Payload Type
 interface CustomJwtPayload extends JwtPayload {
   userId: string;
   role: string;
@@ -16,11 +17,21 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await connectDB();
+  // ✅ Fix CORS
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.setHeader("Access-Control-Allow-Methods", "PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ Handle CORS preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
   if (req.method !== "PUT") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
+
+  await connectDB();
 
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -38,14 +49,15 @@ export default async function handler(
       });
     }
 
-    const { orderId, status } = req.body;
-    const validStatuses = ["Accepted", "Out for Delivery", "Delivered"];
+    const { id } = req.query; // ✅ Use `id` instead of `orderId`
+    const { status } = req.body;
 
+    const validStatuses = ["Accepted", "Out for Delivery", "Delivered"];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ error: "Invalid status update" });
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
